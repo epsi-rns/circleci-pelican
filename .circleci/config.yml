@@ -34,7 +34,11 @@ jobs:
               git push --set-upstream origin gh-pages
               git checkout master
             fi
-      - run: pip install -r requirements.txt
+      - run: 
+          name: Install and Configure Dependencies
+          command: |
+            pip install --upgrade 
+            pip install -r requirements.txt
       - run: make html
       - deploy:
           name: Precheck Output 
