@@ -37,10 +37,16 @@ jobs:
       - run: 
           name: Install and Configure Dependencies
           command: |
+            python3 -m venv venv
+            . venv/bin/activate
             pip install --user --upgrade pip
             pip install -r requirements.txt
             pelican --help
-      - run: make html
+      - run: 
+          name: Generate Pelican Static Files
+          command: |
+            . venv/bin/activate
+            make html
       - deploy:
           name: Precheck Output 
           command: |
