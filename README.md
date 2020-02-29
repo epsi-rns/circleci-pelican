@@ -1,4 +1,4 @@
-# Pelican Bulma Test Drive on Travis
+# Pelican Bulma Test Drive on CircleCI
 
 An example of Pelican site using Bulma Material Design
 for personal learning purpose.

@@ -1,0 +1,59 @@
+version: 2
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - buildsite:
+         filters:
+            branches:
+              only: master
+
+jobs:
+  buildsite:
+    docker:
+      - image: circleci/python:3.7.1
+    working_directory: ~/source
+    environment:
+      BUILD_DIR: ~/public
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "dc:18:73:7a:1a:a7:5f:92:31:67:cb:20:eb:0f:77:31"
+      - run:
+          name: Prepare Git Initialization
+          command: |
+            git config user.email "someone@somewhere"
+            git config user.name "someone"
+            git branch -a -l | cat
+            if [ $(git branch -a -l | grep gh-pages | wc -l) -eq "0" ]; then
+              echo "[Create gh-pages for the first time]"
+              git checkout -b gh-pages
+              git commit --allow-empty -m "Create gh-pages for the first time"
+              git push --set-upstream origin gh-pages
+              git checkout master
+            fi
+      - run: pip install -r requirements.txt
+      - run: make html
+      - deploy:
+          name: Precheck Output 
+          command: |
+            git worktree add -B gh-pages $BUILD_DIR origin/gh-pages
+            git worktree list
+            cd $BUILD_DIR
+            ls -lah
+            find . -maxdepth 1 ! -name '.git' -exec rm -rf {} \;
+            mv ~/source/output/* .
+            touch .nojekyll
+            ls -lah
+      - deploy:
+          name: Deploy Release to GitHub
+          command: |
+            cd $BUILD_DIR
+            git add --all
+            git status
+            git commit --allow-empty -m "[skip ci] $(git log master -1 --pretty=%B)"
+            git push --set-upstream origin gh-pages
+            echo "[Deployed Successfully]"
+
