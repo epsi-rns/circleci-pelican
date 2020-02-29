@@ -20,7 +20,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - "dc:18:73:7a:1a:a7:5f:92:31:67:cb:20:eb:0f:77:31"
+            - "b8:0d:46:75:5d:be:c4:2b:bd:fc:74:8d:d7:0c:4b:c1"
       - run:
           name: Prepare Git Initialization
           command: |
